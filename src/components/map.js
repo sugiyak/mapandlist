@@ -47,33 +47,34 @@ export default function Map () {
                 position={location}
                 />)
             })
-
             }
         </GoogleMap>
 
         {loaded && 
-        <div className="sidebar">
-        <SearchBox setLocation={setLocations} setPlaces={setPlaces} bounds={bounds}/>
-        { places && 
-            <>
-                <div className="result-box">
-                    
-                        < Table places={places}/>
-                    
-                </div>
-                <div className='downloads'>
-                    <CSVLink
-                        data={places}
-                        filename={"places.csv"}
-                        className="btn btn-success"
-                        target="_blank"
-                    >
-                        <div><i className="fa fa-download"></i>  CSV Download</div>
-                    </CSVLink>
-                </div>
-            </>
-        }
-        </div>
+        <>
+            <div className='searchbox'>
+            <SearchBox setLocations={setLocations} setPlaces={setPlaces} bounds={bounds}/>
+            </div>
+            { places && 
+                <>
+                    <div className="result-box">
+                        
+                            < Table places={places}/>
+                        
+                    </div>
+                    <div className='downloads'>
+                        <CSVLink
+                            data={places}
+                            filename={"places.csv"}
+                            className="btn btn-success"
+                            target="_blank"
+                        >
+                            <div><i className="fa fa-download"></i>  CSV Download</div>
+                        </CSVLink>
+                    </div>
+                </>
+            }
+        </>
         }
         </>
     )

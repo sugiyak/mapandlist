@@ -1,6 +1,5 @@
 import { useLoadScript } from "@react-google-maps/api"
 import Map from "./components/map"
-import './css/style.css';
 
 const libraries = ['places']
 

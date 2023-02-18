@@ -48,7 +48,7 @@ export default function SearchBox(props){
     <input
         type="text"
         placeholder="Type in keywords..."
-        className="searchbox"
+        className="searchbox-input"
         onFocus={(e)=>{e.target.value="";props.setPlaces("")}}
     />
     </StandaloneSearchBox>
