@@ -2,31 +2,32 @@ import { useState } from 'react';
 import {GoogleMap, Marker } from "@react-google-maps/api"
 import { CSVLink } from "react-csv";
 import { useMemo } from "react";
-import Table from "./table"
-import SearchBox from "./searchBox"
+import Table from "./table";
+import SearchBox from "./searchBox";
 import '../css/style.css';
 
 
-export default function Map () {
+export default function Map (props) {
     const [map, setMap] = useState(null);    
     const [loaded, setLoaded] = useState([false]); 
-    const [locations, setLocations] = useState([]);
+    const [locations, setLocations] = useState();
     const [places, setPlaces] = useState(null);
     const [bounds, setBounds] = useState(null);
     const options = useMemo(()=>({
         disableDefaultUI: true,
         clickableIcons: false
     }),[])
-    
-    const center = useMemo(()=>({lat: 47.6062, lng: -122.3321}),[])
+
+    const center = props.userLocation;
     const onMapLoad = ref => {
         setMap(ref);
         setLoaded(true);
-
       };
     const onBoundsChanged = () => {
         setBounds(map.getBounds());
         console.log(`getbounds:${map.getBounds()}`)}
+    
+    
 
 
 
