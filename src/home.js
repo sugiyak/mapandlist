@@ -5,17 +5,19 @@ import Map from "./components/map"
 
 
 export default function Home () {
+    //configs for @react-google-maps/api
     const [ libraries ] = useState(['places']);
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_API_KEY,
         libraries
     });
+    //get user`s current location
     const [userLocation, setUserLocation] = useState(false)
     useEffect(()=>{
         if ('geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
                 let currentLocations = {lat: parseFloat(position.coords.latitude.toFixed(4)), lng: parseFloat(position.coords.longitude.toFixed(4))};
-                console.log(currentLocations);
+                console.log(`currentLocations: ${JSON.stringify(currentLocations)}`);
                 setUserLocation(currentLocations);
               });
           } else {

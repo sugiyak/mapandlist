@@ -5,6 +5,7 @@ export default function Table (props) {
             <table cellSpacing="0" cellPadding="0" className='styled-table'>
                 <thead>
                     <tr>
+                        <th scope="col">No.</th>
                         <th scope="col">Name</th>
                         <th scope="col">Adress</th>
                         <th scope="col">Rating</th>
@@ -15,6 +16,7 @@ export default function Table (props) {
                         return (
                 
                         <tr key={i}>
+                            <td>{place.index}</td>
                             <td>{place.name}</td>
                             <td>{place.address}</td>
                             <td>{place.rating}</td>

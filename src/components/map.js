@@ -23,9 +23,8 @@ export default function Map (props) {
         setMap(ref);
         setLoaded(true);
       };
-    const onBoundsChanged = () => {
-        setBounds(map.getBounds());
-        console.log(`getbounds:${map.getBounds()}`)}
+    const onBoundsChanged = ()=> {
+        setBounds(map.getBounds());}
     
     
 
@@ -45,7 +44,9 @@ export default function Map (props) {
             locations.map((location, i)=>{
                 return( <Marker
                 key={i}
-                position={location}
+                position={location.latlng}
+                title={location.name}
+                label={location.index.toString()}
                 />)
             })
             }
