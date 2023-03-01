@@ -178,10 +178,6 @@ body{
         z-index: 2;
         margin-right: 2.5%;
     }
-    .btn-cross{
-
-        z-index: 2;
-    }
 
     .progress-bar-box{
         width: 95.3% !important;
@@ -196,7 +192,7 @@ body{
         grid-row-end: 3;
         z-index: 2;
     
-        height: 50%;
+        height: 70%;
         width: 100%;
         margin-left: 3% !important;
         margin-right: 3% !important;
