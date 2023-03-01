@@ -125,7 +125,7 @@ body{
     body{
         margin: 0%;
         padding: 0%;
-        height: 200vh;
+        height: 100vh;
         width: 100vw;
     }
 
@@ -134,7 +134,7 @@ body{
         height: 100%;
         width: 100%;
         grid-template-columns: 1fr;
-        grid-template-rows: 5% 5% 25% 5% 40%;
+        grid-template-rows: 5% 5% 35% 5% 40%;
     }
 
     .loading{
@@ -192,8 +192,9 @@ body{
         grid-row-end: 3;
         z-index: 2;
     
-        height: 70%;
+        height: 100%;
         width: 100%;
+        margin-top: 5% !important;
         margin-left: 3% !important;
         margin-right: 3% !important;
     }
@@ -227,10 +228,10 @@ body{
         grid-column-start: 1;
         grid-column-end: 2;
         grid-row-start: 5;
-        grid-row-end: 6;
+        grid-row-end: 7;
     
         width: 100vw;
-        height: 95%;
+        height: 100%;
         margin-right: 0%;
         margin-left: 0px;
         border-radius: 5px;

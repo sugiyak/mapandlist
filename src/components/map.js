@@ -6,7 +6,6 @@ import PlaceTable from "./table";
 import SearchBox from "./searchBox";
 import markerBlue from "../images/geo-alt-fill-blue.svg"
 import '../css/style.css';
-import Draggable from 'react-draggable';
 
 
 export default function Map (props) {
@@ -98,7 +97,6 @@ export default function Map (props) {
             center={center}/>
             { places && 
                 <>
-                    <Draggable>
                     <div className="result-box">
                             <PlaceTable
                             places={places}
@@ -106,7 +104,6 @@ export default function Map (props) {
                             distanceAndDurations={distanceAndDurations}
                             />
                     </div>
-                    </Draggable>
                     <div className='downloads'>
                         <CSVLink
                             data={places}
