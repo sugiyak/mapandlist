@@ -1,3 +1,5 @@
+//This component contains logics for searchbox and direction search feature.
+
 import { useState, useRef } from 'react';
 import {StandaloneSearchBox} from "@react-google-maps/api"
 import { useMemo } from "react";
@@ -52,14 +54,20 @@ export default function SearchBox(props){
         })
         props.setPlaces(data);
     }
+
     //combine places data and
      function combineData(places, distDur){
-        let data =   places.map((place, i)=>{
-            return {...place,
-                    distance: `${distDur[i].data.routes[0].legs[0].distance.value / 1000} km (${distDur[i].data.routes[0].legs[0].distance.text})`,
-                    duration: distDur[i].data.routes[0].legs[0].duration.text}
-        });
-         props.setPlaces(data);
+        try {
+            let data =  places.map((place, i)=>{
+                return {...place,
+                        distance: `${distDur[i].data.routes[0].legs[0].distance.value / 1000} km (${distDur[i].data.routes[0].legs[0].distance.text})`,
+                        duration: distDur[i].data.routes[0].legs[0].duration.text}
+            });
+             props.setPlaces(data);
+        } catch (error) {
+            console.log(error)
+        }
+
     }
 
     //A function that invoke getRoute on each places on places state. 
@@ -70,15 +78,15 @@ export default function SearchBox(props){
             results.current = [];
             props.places.forEach((place, index)=>{setTimeout(getRoute, index * 700, place.latlng)});
         } catch (error) {
-            console.log(error.message);
+            console.log(error);
         }
-        
     }
 
     //A function to retrieve a route for a place
     async function getRoute(latlng){
         try {
             const directionsService = new google.maps.DirectionsService()
+            //request call to google maps api server to get direction responses
             const result = await directionsService.route({
               origin: props.center,
               destination: latlng,
@@ -86,12 +94,14 @@ export default function SearchBox(props){
             })
             results.current.push({data: result});
             props.setDirectionResults(results.current);
+        } catch (error) {
+            results.current.push({data: {routes: [{legs: [{distance: {value: 0, text: "Not found"}, duration: {text: "Not found"}}]}]}})
+            props.setDirectionResults(results.current)
+            console.log(error.message)
+        } finally {
             directionLoading.current++;
             setDirectionLoadingState(directionLoading.current);
-            console.log(directionLoading.current);
-            if(props.places.length === results.current.length) {combineData(props.places,results.current);props.setDirectionsLoaded(true)};
-        } catch (error) {
-            console.log(error.message)
+            if(results.current.length === 20) {combineData(props.places,results.current);props.setDirectionsLoaded(true)};
         }
     }
 
@@ -119,7 +129,13 @@ export default function SearchBox(props){
         </StandaloneSearchBox>
     </div>
     {placeInputRef.current.value &&
-        <DirectionBar directionLoading={directionLoading} travelMode={travelMode} directionLoadingState={directionLoadingState} getDirections={getDirections}/>
+        <DirectionBar
+        directionLoading={directionLoading}
+        travelMode={travelMode}
+        directionLoadingState={directionLoadingState}
+        getDirections={getDirections}
+        places={props.places}
+        />
     }
     </>
     )
