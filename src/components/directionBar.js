@@ -28,7 +28,7 @@ export default function DirectionBar(props){
         else {
             return(
 
-                <div className="mb-3 directions-buttons progress-bar bg-white rounded">
+                <div className="mb-3 directions-buttons progress-bar-box bg-white rounded">
                     <ProgressBar animated now={props.directionLoadingState * 5} label={`${props.directionLoadingState * 5}%`}></ProgressBar>
                 </div>
             )
