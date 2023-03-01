@@ -235,8 +235,7 @@ body{
         margin-left: 0px;
         border-radius: 5px;
         border: none;
-        overflow-y: visible;
-        overflow-x: scroll;
+        overflow: scroll;
         z-index: 2;
     }
 
