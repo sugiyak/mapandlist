@@ -1,58 +1,126 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {StandaloneSearchBox} from "@react-google-maps/api"
 import { useMemo } from "react";
 import '../css/style.css';
+import DirectionBar from "./directionBar"
+
 
 export default function SearchBox(props){
-    //Seachbox
+
+    const google = window.google;
+
+    //Seachbox ref
     const [searchBox, setSearchBox] = useState(null);
-    //boundry of place search
-    const defaultBounds = useMemo(()=>({sw: [47.35560844768126, -123.309883203125], ne:[47.855596745192116, -121.354316796875]}    ),[])
+    //boundry of place search. used in <StandAloneSeachBox>
+    const defaultBounds = useMemo(()=>({sw: [47.35560844768126, -123.309883203125], ne:[47.855596745192116, -121.354316796875]}),[]);
+
+    const travelMode = useRef("");
+    const results = useRef([]);
+    const directionLoading = useRef(0);
+    const [directionLoadingState, setDirectionLoadingState] = useState(0)
+
+    //Seachbox ref
     const onSBLoad = ref => {
       setSearchBox(ref);
     };
+    //Input ref
+    const placeInputRef = useRef("");
 
+    //Used in the searchbox. revoked everytime you submit the place search input.
     const onPlacesChanged = async () => {
         try {
+            props.setDirectionsLoaded(false);
+            props.setPlaces();
+            props.setDirectionResults([])
             let data = await searchBox.getPlaces();
-            orgainzeData(data);
-            console.log(`onPlacesChanged: ${JSON.stringify(data)}`);
-            props.setLocations( await getMarkerPositions(data));
-
+            savePlaces(data);
         } catch (error) {
-            console.log(`onPlacesChanged erros: ${error.massage}`);
+            console.log(`onPlacesChanged errors: ${error.massage}`);
         }
     };
 
-    const getMarkerPositions = async  (places) =>{
-            return places.map((place, i)=>{
-                return {index: i + 1, name:place.name, latlng: {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()}}
-        })
-        }
-    //Process data 
-
-    const orgainzeData = (places) => {
-        let data = places.map((place, i)=>{
-            return {index: i + 1, name: place.name, address: place.formatted_address, rating: place.rating}
-        })
-        console.log(`organized: ${JSON.stringify(data)}`)
-        props.setPlaces(data);
+    const searchBoxCross = ()=>{
+        props.setDirectionsLoaded(false);
+        placeInputRef.current.value = "";
+        props.setPlaces("");
     }
 
+    //add index and latlng to gmap response then save 
+    const savePlaces = (places) => {
+        let data = places.map((place, i)=>{
+            return {...place, index: i + 1, latlng: {lat: parseFloat(place.geometry.location.lat().toFixed(4)), lng: parseFloat(place.geometry.location.lng().toFixed(4))}}
+        })
+        props.setPlaces(data);
+    }
+    //combine places data and
+     function combineData(places, distDur){
+        let data =   places.map((place, i)=>{
+            return {...place,
+                    distance: `${distDur[i].data.routes[0].legs[0].distance.value / 1000} km (${distDur[i].data.routes[0].legs[0].distance.text})`,
+                    duration: distDur[i].data.routes[0].legs[0].duration.text}
+        });
+         props.setPlaces(data);
+    }
+
+    //A function that invoke getRoute on each places on places state. 
+     function getDirections(){
+        try {
+            directionLoading.current = 0;
+            setDirectionLoadingState(0);
+            results.current = [];
+            props.places.forEach((place, index)=>{setTimeout(getRoute, index * 700, place.latlng)});
+        } catch (error) {
+            console.log(error.message);
+        }
+        
+    }
+
+    //A function to retrieve a route for a place
+    async function getRoute(latlng){
+        try {
+            const directionsService = new google.maps.DirectionsService()
+            const result = await directionsService.route({
+              origin: props.center,
+              destination: latlng,
+              travelMode: google.maps.TravelMode[travelMode.current],
+            })
+            results.current.push({data: result});
+            props.setDirectionResults(results.current);
+            directionLoading.current++;
+            setDirectionLoadingState(directionLoading.current);
+            console.log(directionLoading.current);
+            if(props.places.length === results.current.length) {combineData(props.places,results.current);props.setDirectionsLoaded(true)};
+        } catch (error) {
+            console.log(error.message)
+        }
+    }
 
     return(
-    <StandaloneSearchBox
-    onLoad={onSBLoad}
-    defaultBounds={defaultBounds}
-    bounds={props.bounds}
-    onPlacesChanged={onPlacesChanged}
-    >
-    <input
-        type="text"
-        placeholder="Type in keywords..."
-        className="searchbox-input"
-        onFocus={(e)=>{e.target.value="";props.setPlaces("")}}
-    />
-    </StandaloneSearchBox>
+    <>
+    <div className='searchbox'>
+        <StandaloneSearchBox
+        onLoad={onSBLoad}
+        defaultBounds={defaultBounds}
+        bounds={props.bounds}
+        onPlacesChanged={onPlacesChanged}
+        >
+            
+            <div className="input-group mb-3 searchbox-input">
+                <input
+                    type="text"
+                    placeholder="Type in keywords..."
+                    className="form-control"
+                    ref={placeInputRef}
+                />
+                <button type="button" className="btn btn-light btn-cross" onClick={searchBoxCross}>
+                    <i className="fa fa-times"></i>
+                </button>
+            </div>
+        </StandaloneSearchBox>
+    </div>
+    {placeInputRef.current.value &&
+        <DirectionBar directionLoading={directionLoading} travelMode={travelMode} directionLoadingState={directionLoadingState} getDirections={getDirections}/>
+    }
+    </>
     )
 }

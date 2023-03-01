@@ -1,32 +1,38 @@
 import { useState } from 'react';
-import {GoogleMap, Marker } from "@react-google-maps/api"
+import {GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api"
 import { CSVLink } from "react-csv";
 import { useMemo } from "react";
-import Table from "./table";
+import PlaceTable from "./table";
 import SearchBox from "./searchBox";
+import markerBlue from "../images/geo-alt-fill-blue.svg"
 import '../css/style.css';
 
 
 export default function Map (props) {
     const [map, setMap] = useState(null);    
-    const [loaded, setLoaded] = useState([false]); 
-    const [locations, setLocations] = useState();
-    const [places, setPlaces] = useState(null);
+    const [mapLoaded, setMapLoaded] = useState([false]);
+    const [directionsLoaded, setDirectionsLoaded] = useState(false);
+
+    //used for Marker, Table, and directionSearches
+    const [places, setPlaces] = useState();
+    const [distanceAndDurations, setDistanceAndDurations] = useState([]);
+
+    //boundry of searches
     const [bounds, setBounds] = useState(null);
     const options = useMemo(()=>({
         disableDefaultUI: true,
         clickableIcons: false
     }),[])
-
     const center = props.userLocation;
+    //Gmap direction services. used in searchBox.js
+    const [directionResults, setDirectionResults] = useState([]);
+
     const onMapLoad = ref => {
         setMap(ref);
-        setLoaded(true);
+        setMapLoaded(true);
       };
     const onBoundsChanged = ()=> {
-        setBounds(map.getBounds());}
-    
-    
+        setBounds(map.getBounds());}   
 
 
 
@@ -38,31 +44,65 @@ export default function Map (props) {
             mapContainerClassName="map-container"
             options={options}
             onLoad={onMapLoad}
-            onBoundsChanged={loaded && onBoundsChanged}
+            onBoundsChanged={mapLoaded && onBoundsChanged}
         >
-            {locations && 
-            locations.map((location, i)=>{
-                return( <Marker
-                key={i}
-                position={location.latlng}
-                title={location.name}
-                label={location.index.toString()}
-                />)
-            })
+            {center &&
+            <Marker
+            key={1}
+            position={center}
+            title="Center"
+            icon={markerBlue}
+            />
             }
+
+            {places && 
+            places.map((place, i)=>{
+                return( <Marker
+                key={i + 1}
+                position={place.latlng}
+                title={place.name}
+                label={place.index.toString()}
+                />)
+            })}
+
+            {directionsLoaded &&
+            directionResults.map((result, i)=>{
+                return(<DirectionsRenderer
+                key={i}
+                directions={result.data}
+                options={{
+                    markerOptions: {
+                        visible: false,
+                        }
+                }}
+            />)
+            })   
+            
+            } 
+
         </GoogleMap>
 
-        {loaded && 
+        {mapLoaded && 
         <>
-            <div className='searchbox'>
-            <SearchBox setLocations={setLocations} setPlaces={setPlaces} bounds={bounds}/>
-            </div>
+            <SearchBox
+            directionResults={directionResults}
+            setDirectionResults={setDirectionResults}
+            directionsLoaded={directionsLoaded}
+            setDirectionsLoaded={setDirectionsLoaded}
+            setPlaces={setPlaces}
+            distanceAndDurations={distanceAndDurations}
+            setDistanceAndDurations={setDistanceAndDurations}
+            places={places}
+            bounds={bounds}
+            center={center}/>
             { places && 
                 <>
                     <div className="result-box">
-                        
-                            < Table places={places}/>
-                        
+                            <PlaceTable
+                            places={places}
+                            directionsLoaded={directionsLoaded}
+                            distanceAndDurations={distanceAndDurations}
+                            />
                     </div>
                     <div className='downloads'>
                         <CSVLink
