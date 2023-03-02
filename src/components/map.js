@@ -122,7 +122,11 @@ export default function Map (props) {
                         >
                             <div><i className="fa fa-download"></i>  CSV Download</div>
                         </CSVLink>
-                        <Button variant="warning" onClick={downloadJSON}>JSON Download</Button>
+                        <Button
+                        variant="success"
+                        onClick={downloadJSON}
+                        bsPrefix="btn btn-success json-button"
+                        >JSON Download</Button>
                     </div>
                 </>
             }
