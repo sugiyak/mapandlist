@@ -5,6 +5,7 @@ import { useMemo } from "react";
 import PlaceTable from "./table";
 import SearchBox from "./searchBox";
 import markerBlue from "../images/geo-alt-fill-blue.svg"
+import Button from 'react-bootstrap/Button';
 import '../css/style.css';
 
 
@@ -34,6 +35,14 @@ export default function Map (props) {
     const onBoundsChanged = ()=> {
         setBounds(map.getBounds());}   
 
+    function downloadJSON() {
+        const data = places;
+        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'data.json';
+        a.click();}
 
 
     return (
@@ -113,6 +122,7 @@ export default function Map (props) {
                         >
                             <div><i className="fa fa-download"></i>  CSV Download</div>
                         </CSVLink>
+                        <Button variant="warning" onClick={downloadJSON}>JSON Download</Button>
                     </div>
                 </>
             }
