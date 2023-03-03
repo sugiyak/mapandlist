@@ -113,6 +113,7 @@ export default function Map (props) {
                             distanceAndDurations={distanceAndDurations}
                             />
                     </div>
+                    {/*
                     <div className='downloads'>
                         <CSVLink
                             data={places}
@@ -128,6 +129,7 @@ export default function Map (props) {
                         bsPrefix="btn btn-success json-button"
                         >JSON Download</Button>
                     </div>
+                    */}
                 </>
             }
         </>
