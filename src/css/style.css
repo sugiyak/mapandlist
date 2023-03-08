@@ -5,14 +5,6 @@ body{
     width: 100%;
 }
 
-.wrapper{
-    display: grid;
-    height: 100%;
-    width: 100%;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 10vh 10vh 60vh 20vh;
-}
-
 .loading{
     grid-column-start: 3;
     grid-column-end: 4;
@@ -21,60 +13,154 @@ body{
     z-index: 1;
 }
 
+.wrapper{
+    display: grid;
+    height: 100%;
+    width: 100%;
+    grid-template-columns: 5vw 1fr 1fr 1fr 1fr 1fr;
+    grid-template-rows: 5vh 10vh 10vh 10vh 50vh 15vh;
+}
+
 .map-container{
     margin: 0%;
     padding: 0%;
     height: 100vh;
     width: 100vw;
     grid-column-start: 1;
-    grid-column-end: 6;
+    grid-column-end: 7;
     grid-row-start: 1;
-    grid-row-end: 5;
+    grid-row-end: 7;
     z-index: 1;
 }
 
-.searchbox{
-    grid-column-start: 1;
-    grid-column-end: 3;
-    grid-row-start: 1;
-    grid-row-end: 2;
-    width: 100%;
-    height: 100%;
+.searchbox-origin-group-wrapper{
+    display: grid;
+    align-items: end;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 2;
+    grid-row-end: 3;
     z-index: 2;
+
+    height: 100%;
+}
+
+.searchbox-destination-group-wrapper{
+    display: grid;
+    align-items: start;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 3;
+    grid-row-end: 4;
+    z-index: 2;
+
+    height: 100%;
+}
+
+.directions-buttons-wrapper{
+    display: grid;
+    align-items: start;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
+
+}
+
+.progress-bar-wrapper{
+    display: grid;
+    align-items: start;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 4;
+    grid-row-end: 5;
+
+}
+
+.result-box-wrapper{
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 5;
+    grid-row-end: 6;
+}
+
+.searchbox-group{
+    max-height: 50px;
+    width: 100% !important;
+}
+
+.searchbox-group > div {
+    width: 80% !important;
+}
+
+.searchbox-group-destination{
+    margin-top: 0.5rem !important;
+}
+
+.form-control{
+    height: 100% !important;
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+
+.btn-cross {
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+    width: 10%;
+}
+
+.btn-left {
+    border-top-left-radius: 15px !important;
+    border-bottom-left-radius: 15px !important;
+}
+
+.btn-right {
+    border-top-right-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
 }
 
 .searchbox-input{
     height: 100%;
     width: 60%;
-    padding-top: 10px;
-    margin-top: 3%;
-    margin-left: 10%;
-    z-index: 2;
 }
 
-.btn-cross{
+.searchbox-group .btn-cross{
     z-index: 2;
-    width: 10%;
-    margin-right: 10%;
+    width: 2.5rem;
+    margin-right: 0px !important;
 }
 
 .directions-buttons{
-    grid-column-start: 1;
-    grid-column-end: 3;
-    grid-row-start: 2;
-    grid-row-end: 3;
     z-index: 2;
-    margin-top: 3%;
-    margin-left: 10% !important;
-    height: 50%;
-    width: 100%;
+    width: 90%;
+}
+
+@media screen and (min-width: 800px) {
+    .searchbox-group > div {
+        width: 87% !important;
+    }
+    .directions-buttons{
+        width: 100%;
+    }
+}
+
+@media screen and (min-width: 1366px) {
+    .searchbox-group > div {
+        width: 92% !important;
+    }
+    .directions-buttons{
+        width: 100%;
+    }
 }
 
 .progress-bar-box{
-    padding-top: 2%;
-    width: 90%;
     z-index: 2;
+    width: 100%;
 }
+
 .directions-button{
     width: 12.7%;
 }
@@ -83,22 +169,22 @@ body{
     width: 40%;
     height: 100%;
 }
+
 .directions-buttons-text .input-group-text{
     border-top-right-radius: 0px !important;
     border-bottom-right-radius: 0px !important;
 }
 
 .result-box{
-    grid-column-start: 1;
-    grid-column-end: 3;
-    grid-row-start: 3;
-    grid-row-end: 4;
+    grid-column-start: 2;
+    grid-column-end: 4;
+    grid-row-start: 5;
+    grid-row-end: 6;
 
-    width: 90%;
+    width: 100%;
     height: 90%;
     margin-top: 3%;
-    margin-left: 10%;
-    border-radius: 5px;
+    border-radius: 15px;
     overflow: scroll;
     transition: opacity 300ms ease-in;
     z-index: 2;
@@ -112,10 +198,9 @@ body{
 .downloads{
     grid-column-start: 1;
     grid-column-end: 3;
-    grid-row-start: 4;
-    grid-row-end: 5;
+    grid-row-start: 6;
+    grid-row-end: 7;
     
-    margin-left: 10%;
     margin-bottom: 5%;
     z-index: 2;
 }
@@ -123,122 +208,181 @@ body{
 .json-button{
     margin-left: 5px;
 }
-@media (max-width: 660px){
-    body{
-        margin: 0%;
-        padding: 0%;
-        height: 100vh;
-        width: 100vw;
-    }
 
+@media screen and (max-width: 414px) {
     .wrapper{
         display: grid;
         height: 100%;
         width: 100%;
-        grid-template-columns: 1fr;
-        grid-template-rows: 5% 6% 35% 5% 40%;
+        grid-template-columns: 5vw 1fr 5vw;
+        grid-template-rows: 5vh 10vh 10vh 10vh 30vh 35vh;
     }
-
-    .loading{
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 3;
-        grid-row-end: 4;
-        z-index: 1;
-    }
-
+    
     .map-container{
         margin: 0%;
         padding: 0%;
         height: 100vh;
-        width: 100%;
+        width: 100vw;
         grid-column-start: 1;
-        grid-column-end: 2;
+        grid-column-end: 4;
         grid-row-start: 1;
-        grid-row-end: 4;
+        grid-row-end: 7;
         z-index: 1;
     }
     
-    .searchbox{
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 1;
-        grid-row-end: 2;
-        width: 98%;
-        height: 100%;
-        z-index: 2;
-    }
-    .searchbox-input{
-        padding-top: 10px;
-        margin-top: 5px;
-        margin-left: 2.5%;
-        margin-right: 2.5%;
-        z-index: 2;
-    }
-    .btn-cross{
-        z-index: 2;
-        margin-right: 2.5%;
-    }
-
-    .progress-bar-box{
-        width: 95.3% !important;
-        height: 2em;
-        padding-top: 2%;
-    }
-
-    .directions-buttons{
-        grid-column-start: 1;
-        grid-column-end: 2;
+    .searchbox-origin-group-wrapper{
+        display: grid;
+        align-items: end;
+        justify-items: center;
+        grid-column-start: 2;
+        grid-column-end: 3;
         grid-row-start: 2;
         grid-row-end: 3;
         z-index: 2;
     
         height: 100%;
-        width: 100%;
-        margin-top: 9% !important;
-        margin-left: 3% !important;
-        margin-right: 3% !important;
     }
-    .directions-button-left{
-        border-top-left-radius: 5px !important;
-        border-bottom-left-radius: 5px !important;
+    
+    .searchbox-destination-group-wrapper{
+        display: grid;
+        align-items: start;
+        justify-items: center;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 3;
+        grid-row-end: 4;
+        z-index: 2;
+    
+        height: 100%;
+    }
+    
+    .directions-buttons-wrapper{
+        display: grid;
+        align-items: start;
+        justify-items: center;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 4;
+        grid-row-end: 5;
+    
+    }
+    
+    .result-box-wrapper{
+        grid-column-start: 2;
+        grid-column-end: 4;
+        grid-row-start: 5;
+        grid-row-end: 6;
+    }
+    
+    .searchbox-group{
+        max-height: 50px;
+        width: 100%;
+    }
+
+    .searchbox-group > div {
+        width: 89% !important;
+    }
+    
+    .searchbox-group-destination{
+        margin-top: 0.5rem !important;
+    }
+    
+    .form-control{
+        height: 100% !important;
+    
+        border-top-left-radius: 15px !important;
+        border-bottom-left-radius: 15px !important;
+        border-top-right-radius: 0px !important;
+        border-bottom-right-radius: 0px !important;
+    }
+    
+    .btn-cross {
+        border-top-right-radius: 15px !important;
+        border-bottom-right-radius: 15px !important;
+        width: 10%;
+    }
+    
+    
+    .searchbox-input{
+        height: 100%;
+        width: 60%;
+    }
+    
+    .searchbox-group .btn-cross{
+        z-index: 2;
+        width: 2.5rem;
+        margin-right: 0px !important;
+    }
+    
+    
+    .directions-buttons{
+        z-index: 2;
+        width: 100%;
+    }
+    
+    .progress-bar-box{
+        width: 90%;
+        z-index: 2;
     }
     .directions-button{
-        width: 24%;
+        width: 12.7%;
     }
+    
     .directions-buttons-text{
-        display:none;
+        width: 40%;
+        height: 100%;
     }
+    
     .directions-buttons-text .input-group-text{
         border-top-right-radius: 0px !important;
         border-bottom-right-radius: 0px !important;
     }
-
-    .downloads{
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 4;
-        grid-row-end: 5;
-        
-        margin-left: 5%;
-        margin-bottom: 2% !important;
-        z-index: 2;
-    }
     
     .result-box{
-        grid-column-start: 1;
-        grid-column-end: 2;
-        grid-row-start: 5;
+        grid-column-start: 2;
+        grid-column-end: 3;
+        grid-row-start: 6;
         grid-row-end: 7;
     
-        width: 100vw;
-        height: 100%;
-        margin-right: 0%;
-        margin-left: 0px;
+        width: 100%;
+        height: 90%;
+        margin-top: 3%;
         border-radius: 5px;
-        border: none;
         overflow: scroll;
+        transition: opacity 300ms ease-in;
         z-index: 2;
     }
+    
+    .bdr {
+        border-radius: 5px;
+        overflow: hidden;
+      }
+    
+    .downloads{
+        grid-column-start: 1;
+        grid-column-end: 3;
+        grid-row-start: 6;
+        grid-row-end: 7;
+        
+        margin-bottom: 5%;
+        z-index: 2;
+    }
+    
+    .json-button{
+        margin-left: 5px;
+    }
+  }
 
-}
+  @media screen and (max-width: 375px) {
+    .searchbox-group > div {
+        width: 88% !important;
+    }
+
+  }
+
+  @media screen and (max-width: 320px) {
+    .searchbox-group > div {
+        width: 86% !important;
+    }
+
+  }

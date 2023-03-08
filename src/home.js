@@ -7,23 +7,46 @@ import Map from "./components/map"
 export default function Home () {
     //configs for @react-google-maps/api
     const [ libraries ] = useState(['places']);
+    //isLoaded return true when the map is loaded.
     const { isLoaded } = useLoadScript({
         googleMapsApiKey: process.env.REACT_APP_API_KEY,
         libraries
     });
-    //get user`s current location
-    const [userLocation, setUserLocation] = useState(false)
+
+    const [userLocation, setUserLocation] = useState(null)
+
+    //success callback to retrieve user location used in navigator.geolocation.getCurrentPosition 
+    function geoSuccess(position){
+        console.log("locatoin success")
+        let currentLocations = {lat: parseFloat(position.coords.latitude.toFixed(4)), lng: parseFloat(position.coords.longitude.toFixed(4))};
+            console.log(`currentLocations: ${JSON.stringify(currentLocations)}`);
+        setUserLocation(currentLocations);
+    }
+    //success callback to retrieve used in navigator.geolocation.getCurrentPosition 
+    function geoError(){
+        console.log("locatoin error")
+        if (navigator.permissions) {
+            navigator.permissions.query({ name: 'geolocation' }).then(res => {
+            if (res.state === 'denied') {
+            alert('Enable location permissions for this website in your browser settings.')
+            }
+            })}
+        else {
+            alert('Unable to access your location.') // Obtaining Lat/long from address necessary
+            setUserLocation({lat: 47.6062, lng: -122.3321});
+            }
+        setUserLocation({lat: 47.6062, lng: -122.3321});
+        }
+    
+    //get user`s current location/ if user do not allow it, it is set to Seattle.
     useEffect(()=>{
         if ('geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
-                let currentLocations = {lat: parseFloat(position.coords.latitude.toFixed(4)), lng: parseFloat(position.coords.longitude.toFixed(4))};
-                console.log(`currentLocations: ${JSON.stringify(currentLocations)}`);
-                setUserLocation(currentLocations);
-              });
+            console.log("geolocation useEffect")
+            navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
           } else {
+            alert("Sorry, Geolocation is not supported by this browser."); // Alert if browser does not support geolocation
             setUserLocation({lat: 47.6062, lng: -122.3321});
           }
-
     },[])
 
     return (<>
@@ -35,7 +58,10 @@ export default function Home () {
         </Spinner>
         </div>
 :
-        <Map userLocation={userLocation}/>
+        <Map
+        userLocation={userLocation}
+        setUserLocation={setUserLocation}
+        />
         }
 </>);
 }

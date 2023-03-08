@@ -1,15 +1,16 @@
 import { useState } from 'react';
 import {GoogleMap, Marker, DirectionsRenderer } from "@react-google-maps/api"
-import { CSVLink } from "react-csv";
+// import { CSVLink } from "react-csv";
 import { useMemo } from "react";
 import PlaceTable from "./table";
 import SearchBox from "./searchBox";
 import markerBlue from "../images/geo-alt-fill-blue.svg"
-import Button from 'react-bootstrap/Button';
+// import Button from 'react-bootstrap/Button';
 import '../css/style.css';
 
 
 export default function Map (props) {
+    //map ref to GoogleMap component. It is used in 
     const [map, setMap] = useState(null);    
     const [mapLoaded, setMapLoaded] = useState([false]);
     const [directionsLoaded, setDirectionsLoaded] = useState(false);
@@ -24,17 +25,27 @@ export default function Map (props) {
         disableDefaultUI: true,
         clickableIcons: false
     }),[])
+
     const center = props.userLocation;
+
+    
     //Gmap direction services. used in searchBox.js
     const [directionResults, setDirectionResults] = useState([]);
 
+    //
     const onMapLoad = ref => {
         setMap(ref);
         setMapLoaded(true);
       };
     const onBoundsChanged = ()=> {
-        setBounds(map.getBounds());}   
+        try {
+            setBounds(map.getBounds());
+        } catch (error) {
+            return
+        }
+        }   
 
+/*  downloading data form gmap might be against Google api policy so this function is frozen for now.  
     function downloadJSON() {
         const data = places;
         const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -42,14 +53,14 @@ export default function Map (props) {
         const a = document.createElement('a');
         a.href = url;
         a.download = 'data.json';
-        a.click();}
+        a.click();} */
 
 
     return (
         <>
         < GoogleMap
             zoom={10}
-            center={center}
+            center={props.userLocation}
             mapContainerClassName="map-container"
             options={options}
             onLoad={onMapLoad}
@@ -58,8 +69,8 @@ export default function Map (props) {
             {center &&
             <Marker
             key={1}
-            position={center}
-            title="Center"
+            position={props.userLocation}
+            title="Origin"
             icon={markerBlue}
             />
             }
@@ -103,7 +114,10 @@ export default function Map (props) {
             setDistanceAndDurations={setDistanceAndDurations}
             places={places}
             bounds={bounds}
-            center={center}/>
+            center={center}
+            setUserLocation={props.setUserLocation}
+            map={map}
+            />
             { places && 
                 <>
                     <div className="result-box">

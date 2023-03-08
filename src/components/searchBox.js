@@ -5,30 +5,45 @@ import {StandaloneSearchBox} from "@react-google-maps/api"
 import { useMemo } from "react";
 import '../css/style.css';
 import DirectionBar from "./directionBar"
+import { getGeocode, getLatLng } from 'use-places-autocomplete';
+import Button from 'react-bootstrap/Button';
+import InputGroup from 'react-bootstrap/InputGroup';
+import Form from 'react-bootstrap/Form';
 
 
 export default function SearchBox(props){
 
+    //importing global google variable. This is used in getRoute function.
     const google = window.google;
 
-    //Seachbox ref
+    //Seachbox ref state. This is the ref to StandaloneSearchBox components and it is defined when StandaloneSearchBox is loaded.
     const [searchBox, setSearchBox] = useState(null);
-    //boundry of place search. used in <StandAloneSeachBox>
-    const defaultBounds = useMemo(()=>({sw: [47.35560844768126, -123.309883203125], ne:[47.855596745192116, -121.354316796875]}),[]);
-
-    const travelMode = useRef("");
-    const results = useRef([]);
-    const directionLoading = useRef(0);
-    const [directionLoadingState, setDirectionLoadingState] = useState(0)
 
     //Seachbox ref
     const onSBLoad = ref => {
-      setSearchBox(ref);
-    };
-    //Input ref
-    const placeInputRef = useRef("");
+        setSearchBox(ref);
+        };
 
-    //Used in the searchbox. revoked everytime you submit the place search input.
+    //boundry of place search. used in <StandAloneSeachBox>
+    const defaultBounds = useMemo(()=>({sw: [47.35560844768126, -123.309883203125], ne:[47.855596745192116, -121.354316796875]}),[]);
+
+    //Used in getRoute function as a parameter for direciton requests. 
+    const travelMode = useRef("");
+
+    //this store all results(20) from getDirections functions. useState does not work in SetTimeout inside forEach function so useRef is used.
+    const results = useRef([]);
+
+    //Input refs
+    const placeInputRef = useRef("");
+    const originInputRef = useRef("");
+    
+    //this ref and state are used in getRoute function to determine is this program finished laoading the direction results. 
+    const directionLoading = useRef(0);
+    const [directionLoadingState, setDirectionLoadingState] = useState(0)
+
+
+
+    //Used in the searchbox. invoked everytime you submit the place search input.
     const onPlacesChanged = async () => {
         try {
             props.setDirectionsLoaded(false);
@@ -41,6 +56,24 @@ export default function SearchBox(props){
         }
     };
 
+    //When user submitted origin through the box. 
+    async function onOriginChanged(){
+        try{
+            const results = await getGeocode({ address: originInputRef.current.value });
+            const { lat, lng } = await getLatLng(results[0]);
+            props.setUserLocation({ lat, lng })
+        }
+        catch (error) {
+            console.log(error);
+        }
+    }
+
+    //this erases searchbox ref
+    const originCross = ()=>{
+        originInputRef.current.value = "";
+    }
+
+    //this erases searchbox ref
     const searchBoxCross = ()=>{
         props.setDirectionsLoaded(false);
         placeInputRef.current.value = "";
@@ -76,6 +109,7 @@ export default function SearchBox(props){
             directionLoading.current = 0;
             setDirectionLoadingState(0);
             results.current = [];
+            //Google maps api has query limit and the requests need to be made in certain time intervals.
             props.places.forEach((place, index)=>{setTimeout(getRoute, index * 700, place.latlng)});
         } catch (error) {
             console.log(error);
@@ -106,37 +140,53 @@ export default function SearchBox(props){
     }
 
     return(
-    <>
-    <div className='searchbox'>
-        <StandaloneSearchBox
-        onLoad={onSBLoad}
-        defaultBounds={defaultBounds}
-        bounds={props.bounds}
-        onPlacesChanged={onPlacesChanged}
-        >
-            
-            <div className="input-group mb-3 searchbox-input">
-                <input
+    <>  
+        <div className='searchbox-origin-group-wrapper'>
+            <InputGroup className="searchbox-group">
+                <StandaloneSearchBox
+                        onPlacesChanged={onOriginChanged}
+                    >
+                    <Form.Control
+                    className='searchbox-input'
                     type="text"
-                    placeholder="Type in keywords..."
-                    className="form-control"
-                    ref={placeInputRef}
-                />
-                <button type="button" className="btn btn-light btn-cross" onClick={searchBoxCross}>
+                    placeholder="Center/origin.."
+                    ref={originInputRef}
+                    />
+                </StandaloneSearchBox>
+                <Button className='btn-cross' onClick={originCross}>
                     <i className="fa fa-times"></i>
-                </button>
-            </div>
-        </StandaloneSearchBox>
-    </div>
-    {placeInputRef.current.value &&
-        <DirectionBar
-        directionLoading={directionLoading}
-        travelMode={travelMode}
-        directionLoadingState={directionLoadingState}
-        getDirections={getDirections}
-        places={props.places}
-        />
-    }
+                </Button>
+            </InputGroup>            
+        </div>
+        <div className='searchbox-destination-group-wrapper'>
+            <InputGroup className="searchbox-group searchbox-group-destination">
+                <StandaloneSearchBox
+                    onLoad={onSBLoad}
+                    defaultBounds={defaultBounds}
+                    bounds={props.bounds}
+                    onPlacesChanged={onPlacesChanged}
+                    >
+                    <Form.Control
+                    className='searchbox-input'
+                    type="text"
+                    placeholder="Destinations.."
+                    ref={placeInputRef}
+                    />
+                </StandaloneSearchBox>
+                <Button className='btn-cross' onClick={searchBoxCross}>
+                    <i className="fa fa-times"></i>
+                </Button>
+            </InputGroup>            
+        </div>
+        {props.places &&
+            <DirectionBar
+            directionLoading={directionLoading}
+            travelMode={travelMode}
+            directionLoadingState={directionLoadingState}
+            getDirections={getDirections}
+            places={props.places}
+            />
+        }
     </>
     )
 }
