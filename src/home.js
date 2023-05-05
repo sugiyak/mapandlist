@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import { useLoadScript } from "@react-google-maps/api";
 import Map from "./components/map";
+import CookieConsent from "react-cookie-consent";
 
 export default function Home({ trackPageView }) {
   //configs for @react-google-maps/api
@@ -69,6 +70,17 @@ export default function Home({ trackPageView }) {
       ) : (
         <Map userLocation={userLocation} setUserLocation={setUserLocation} />
       )}
+      <CookieConsent
+        location="bottom"
+        buttonText="Accept"
+        cookieName="myCookieConsent"
+        style={{ background: "#2B373B" }}
+        buttonStyle={{ color: "#4e503b", fontSize: "13px" }}
+        expires={150}
+      >
+        This website uses cookies to enhance the user experience.{" "}
+        <span style={{ fontSize: "10px" }}>Learn more</span>
+      </CookieConsent>
     </>
   );
 }
