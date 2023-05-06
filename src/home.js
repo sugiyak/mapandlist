@@ -31,22 +31,22 @@ export default function Home({ trackPageView }) {
     setUserLocation(currentLocations);
   }
   //success callback to retrieve used in navigator.geolocation.getCurrentPosition
-  function geoError() {
-    console.log("location error");
-    if (navigator.permissions) {
-      navigator.permissions
-        .query({ name: "geolocation" })
-        .then((res) => {
-          if (res.state === "denied") {
-            alert("Enable location permissions for this website in your browser settings.");
-          }
-        });
-    } else {
-      alert("Unable to access your location."); // Obtaining Lat/long from address necessary
-      setUserLocation({ lat: 47.6062, lng: -122.3321 });
-    }
-    setUserLocation({ lat: 47.6062, lng: -122.3321 });
+function geoError() {
+  console.log("location error");
+  if (navigator.permissions) {
+    navigator.permissions
+      .query({ name: "geolocation" })
+      .then((res) => {
+        if (res.state === "denied") {
+          alert("Enable location permissions for this website in your browser settings.");
+        }
+      });
+  } else {
+    alert("Unable to access your location."); // Obtaining Lat/long from address necessary
   }
+}
+
+  
 
   //get user`s current location/ if user do not allow it, it is set to Seattle.
   useEffect(() => {
@@ -57,7 +57,7 @@ export default function Home({ trackPageView }) {
       alert("Sorry, Geolocation is not supported by this browser."); // Alert if browser does not support geolocation
       setUserLocation({ lat: 47.6062, lng: -122.3321 });
     }
-  }, []);
+  }, []);  
 
   return (
     <>
