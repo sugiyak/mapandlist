@@ -85,17 +85,28 @@ npm start
 
 ### API Integration
 
-The application integrates with Google Maps APIs:
-- **Maps JavaScript API** - Core map functionality
-- **Places API** - Location search and autocomplete
-- **Directions API** - Route calculation with rate limiting (700ms intervals)
+The application uses a secure serverless architecture:
+- **Frontend**: Maps JavaScript API for map display (domain-restricted key)
+- **Backend**: Netlify Functions proxy for:
+  - **Places API** - Location search via `/netlify/functions/places-search`
+  - **Directions API** - Route calculation via `/netlify/functions/directions`
+  - **Geocoding API** - Address conversion via `/netlify/functions/geocode`
+- **Security**: All sensitive API calls use server-side key, rate limiting preserved
 
 ## Environment Variables
 
-Required environment variables:
-
-- `REACT_APP_API_KEY` - Google Maps API key
+### Frontend (.env file):
+- `REACT_APP_API_KEY` - Google Maps API key (restricted to domain for map display only)
 - `REACT_APP_GA_TRACKING_ID` - Google Analytics tracking ID (optional)
+
+### Backend (Netlify Environment Variables):
+- `GOOGLE_MAPS_API_KEY` - Google Maps API key (unrestricted, server-side only)
+
+### Security Note:
+This application uses a secure architecture with Netlify Functions to protect sensitive API calls:
+- **Frontend API key**: Restricted to your domain, used only for map display
+- **Backend API key**: Unrestricted but secure server-side key for Places, Directions, and Geocoding APIs
+- All sensitive API calls are proxied through Netlify Functions to prevent key exposure
 
 ## Contributing
 

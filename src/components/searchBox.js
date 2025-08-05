@@ -1,11 +1,11 @@
 //This component contains logics for searchbox and direction search feature.
 
 import { useState, useRef } from 'react';
-import {StandaloneSearchBox} from "@react-google-maps/api"
-import { useMemo } from "react";
+// import {StandaloneSearchBox} from "@react-google-maps/api" // Removed - using custom search
+// import { useMemo } from "react"; // Removed - no longer needed
 import '../css/style.css';
 import DirectionBar from "./directionBar"
-import { getGeocode, getLatLng } from 'use-places-autocomplete';
+// import { getGeocode, getLatLng } from 'use-places-autocomplete'; // Removed - using Netlify functions
 import Button from 'react-bootstrap/Button';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Form from 'react-bootstrap/Form';
@@ -16,16 +16,7 @@ export default function SearchBox(props){
     //importing global google variable. This is used in getRoute function.
     const google = window.google;
 
-    //Seachbox ref state. This is the ref to StandaloneSearchBox components and it is defined when StandaloneSearchBox is loaded.
-    const [searchBox, setSearchBox] = useState(null);
-
-    //Seachbox ref
-    const onSBLoad = ref => {
-        setSearchBox(ref);
-        };
-
-    //boundry of place search. used in <StandAloneSeachBox>
-    const defaultBounds = useMemo(()=>({sw: [47.35560844768126, -123.309883203125], ne:[47.855596745192116, -121.354316796875]}),[]);
+    // Removed StandaloneSearchBox related states - using custom search with Netlify functions
 
     //Used in getRoute function as a parameter for direciton requests. 
     const travelMode = useRef("");
@@ -41,27 +32,78 @@ export default function SearchBox(props){
     const directionLoading = useRef(0);
     const [directionLoadingState, setDirectionLoadingState] = useState(0)
 
+    // Helper function to call Netlify functions
+    const callNetlifyFunction = async (functionName, data) => {
+        try {
+            const response = await fetch(`/.netlify/functions/${functionName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            return await response.json();
+        } catch (error) {
+            console.error(`Error calling ${functionName}:`, error);
+            throw error;
+        }
+    };
+
 
 
     //Used in the searchbox. invoked everytime you submit the place search input.
     const onPlacesChanged = async () => {
         try {
+            const searchTerm = placeInputRef.current.value;
+            if (!searchTerm.trim()) return;
+            
             props.setDirectionsLoaded(false);
             props.setPlaces();
-            props.setDirectionResults([])
-            let data = await searchBox.getPlaces();
-            savePlaces(data);
+            props.setDirectionResults([]);
+            
+            // Use geocoding to get coordinates for the search term
+            const geocodeResult = await callNetlifyFunction('geocode', {
+                address: searchTerm
+            });
+            
+            if (geocodeResult.results && geocodeResult.results.length > 0) {
+                const location = geocodeResult.results[0].geometry.location;
+                const locationString = `${location.lat},${location.lng}`;
+                
+                // Search for places near this location
+                const placesResult = await callNetlifyFunction('places-search', {
+                    location: locationString,
+                    radius: 5000, // 5km radius
+                    keyword: searchTerm
+                });
+                
+                if (placesResult.results) {
+                    savePlaces(placesResult.results);
+                }
+            }
         } catch (error) {
-            console.log(`onPlacesChanged errors: ${error.massage}`);
+            console.log(`onPlacesChanged errors: ${error.message}`);
         }
     };
 
     //When user submitted origin through the box. 
     async function onOriginChanged(){
         try{
-            const results = await getGeocode({ address: originInputRef.current.value });
-            const { lat, lng } = await getLatLng(results[0]);
-            props.setUserLocation({ lat, lng })
+            const geocodeResult = await callNetlifyFunction('geocode', {
+                address: originInputRef.current.value
+            });
+            
+            if (geocodeResult.results && geocodeResult.results.length > 0) {
+                const location = geocodeResult.results[0].geometry.location;
+                props.setUserLocation({ lat: location.lat, lng: location.lng });
+            } else {
+                console.log('No geocoding results found');
+            }
         }
         catch (error) {
             console.log(error);
@@ -83,7 +125,15 @@ export default function SearchBox(props){
     //add index and latlng to gmap response then save 
     const savePlaces = (places) => {
         let data = places.map((place, i)=>{
-            return {...place, index: i + 1, latlng: {lat: parseFloat(place.geometry.location.lat().toFixed(4)), lng: parseFloat(place.geometry.location.lng().toFixed(4))}}
+            // Handle the different format from Netlify function (plain JSON vs Google Maps objects)
+            const lat = typeof place.geometry.location.lat === 'function' 
+                ? place.geometry.location.lat() 
+                : place.geometry.location.lat;
+            const lng = typeof place.geometry.location.lng === 'function' 
+                ? place.geometry.location.lng() 
+                : place.geometry.location.lng;
+            
+            return {...place, index: i + 1, latlng: {lat: parseFloat(lat.toFixed(4)), lng: parseFloat(lng.toFixed(4))}}
         })
         props.setPlaces(data);
     }
@@ -119,13 +169,12 @@ export default function SearchBox(props){
     //A function to retrieve a route for a place
     async function getRoute(latlng){
         try {
-            const directionsService = new google.maps.DirectionsService()
-            //request call to google maps api server to get direction responses
-            const result = await directionsService.route({
-              origin: props.center,
-              destination: latlng,
-              travelMode: google.maps.TravelMode[travelMode.current],
-            })
+            //request call to netlify function to get direction responses
+            const result = await callNetlifyFunction('directions', {
+                origin: props.center,
+                destination: latlng,
+                travelMode: travelMode.current,
+            });
             results.current.push({data: result});
             props.setDirectionResults(results.current);
         } catch (error) {
@@ -143,16 +192,21 @@ export default function SearchBox(props){
     <>  
         <div className='searchbox-origin-group-wrapper'>
             <InputGroup className="searchbox-group">
-                <StandaloneSearchBox
-                        onPlacesChanged={onOriginChanged}
-                    >
-                    <Form.Control
+                <Form.Control
                     className='searchbox-input'
                     type="text"
                     placeholder="Center/origin.."
                     ref={originInputRef}
-                    />
-                </StandaloneSearchBox>
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            onOriginChanged();
+                        }
+                    }}
+                />
+                <Button className='btn-search' onClick={onOriginChanged}>
+                    <i className="fa fa-search"></i>
+                </Button>
                 <Button className='btn-cross' onClick={originCross}>
                     <i className="fa fa-times"></i>
                 </Button>
@@ -160,19 +214,21 @@ export default function SearchBox(props){
         </div>
         <div className='searchbox-destination-group-wrapper'>
             <InputGroup className="searchbox-group searchbox-group-destination">
-                <StandaloneSearchBox
-                    onLoad={onSBLoad}
-                    defaultBounds={defaultBounds}
-                    bounds={props.bounds}
-                    onPlacesChanged={onPlacesChanged}
-                    >
-                    <Form.Control
+                <Form.Control
                     className='searchbox-input'
                     type="text"
                     placeholder="Destinations.."
                     ref={placeInputRef}
-                    />
-                </StandaloneSearchBox>
+                    onKeyPress={(e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            onPlacesChanged();
+                        }
+                    }}
+                />
+                <Button className='btn-search' onClick={onPlacesChanged}>
+                    <i className="fa fa-search"></i>
+                </Button>
                 <Button className='btn-cross' onClick={searchBoxCross}>
                     <i className="fa fa-times"></i>
                 </Button>

@@ -5,9 +5,10 @@ import Map from "./components/map";
 import CookieConsent from "react-cookie-consent";
 
 export default function Home({ trackPageView }) {
-  //configs for @react-google-maps/api
+  //configs for @react-google-maps/api - still needed for map display only
   const [libraries] = useState(["places"]);
   //isLoaded return true when the map is loaded.
+  // Note: Still need API key for map display - consider using restricted key for frontend
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: process.env.REACT_APP_API_KEY,
     libraries,
