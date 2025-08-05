@@ -1,70 +1,110 @@
-# Getting Started with Create React App
+# Map and List
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+A React-based web application that helps users find nearby places and calculate routes with distances. Built with Google Maps API integration for comprehensive location services.
+
+## Features
+
+- **Interactive Map**: Google Maps integration with custom markers and route visualization
+- **Smart Search**: Dual search functionality for origin/destination with autocomplete
+- **Route Calculation**: Automatic distance and duration calculations between points
+- **Place Discovery**: Find nearby places with detailed information including ratings
+- **Responsive Design**: Bootstrap-styled interface that works across devices
+- **Location Services**: Automatic user location detection with fallback options
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js (version 14 or higher)
+- Google Maps API key with Places API enabled
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
+cd mapandlist
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+Create a `.env` file in the root directory and add:
+```
+REACT_APP_API_KEY=your_google_maps_api_key
+REACT_APP_GA_TRACKING_ID=your_google_analytics_id
+```
+
+### Development
+
+Start the development server:
+```bash
+npm run dev
+```
+
+The application will open at [http://localhost:3000](http://localhost:3000).
+
+### Production
+
+Build the application for production:
+```bash
+npm run build
+```
+
+Start the production server:
+```bash
+npm start
+```
 
 ## Available Scripts
 
-In the project directory, you can run:
+- `npm run dev` - Start development server
+- `npm start` - Start production server (serves built files)
+- `npm run build` - Build for production
+- `npm test` - Run tests in watch mode
 
-### `npm start`
+## Architecture
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Core Components
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **Home** (`src/home.js`) - Main application container handling Google Maps API loading, geolocation, and analytics
+- **Map** (`src/components/map.js`) - Google Maps rendering with markers and route visualization
+- **SearchBox** (`src/components/searchBox.js`) - Search functionality with autocomplete and direction calculation
+- **PlaceTable** (`src/components/table.js`) - Results display with place details and calculated metrics
 
-### `npm test`
+### Key Technologies
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+- React 18 with hooks for state management
+- Google Maps JavaScript API with Places library
+- React Bootstrap for UI components
+- Google Analytics for user tracking
+- React Cookie Consent for privacy compliance
 
-### `npm run build`
+### API Integration
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+The application integrates with Google Maps APIs:
+- **Maps JavaScript API** - Core map functionality
+- **Places API** - Location search and autocomplete
+- **Directions API** - Route calculation with rate limiting (700ms intervals)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+## Environment Variables
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Required environment variables:
 
-### `npm run eject`
+- `REACT_APP_API_KEY` - Google Maps API key
+- `REACT_APP_GA_TRACKING_ID` - Google Analytics tracking ID (optional)
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## Contributing
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+## License
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+This project is private and proprietary.
