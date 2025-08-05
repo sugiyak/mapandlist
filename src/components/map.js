@@ -7,7 +7,6 @@ import SearchBox from "./searchBox";
 import markerBlue from "../images/geo-alt-fill-blue.svg"
 // import Button from 'react-bootstrap/Button';
 import '../css/style.css';
-import AdsterraAd from './adsterraAd';
 
 export default function Map (props) {
     //map ref to GoogleMap component. It is used in 
@@ -146,11 +145,6 @@ export default function Map (props) {
                     */}
                 </>
             }
-            {places && !directionsLoaded && (
-            <div className="ad-container">
-                <AdsterraAd />
-            </div>
-            )}
         </>
         }
         </>

@@ -145,16 +145,6 @@ body{
     .directions-buttons{
         width: 100%;
     }
-    .ad-container{
-        grid-column-start: 4;
-        grid-column-end: 6;
-        grid-row-start: 5;
-        grid-row-end: 6;
-    
-        height: 100%;
-        width: 100%;
-        z-index: 2;
-    }
 }
 
 @media screen and (min-width: 1366px) {
@@ -222,9 +212,6 @@ body{
 
 
 
-#adsterra-ad-container{
-    z-index: 3;
-}
 
 
 @media screen and (max-width: 414px) {
