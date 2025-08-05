@@ -1,6 +1,6 @@
 # Map and List
 
-A React-based web application that helps users find nearby places and calculate routes with distances. Built with Google Maps API integration for comprehensive location services.
+A React-based web application that helps users find nearby places and calculate multiple routes to get there. Built with Google Maps API integration for comprehensive location services.
 
 ## Features
 
